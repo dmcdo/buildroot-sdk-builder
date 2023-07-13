@@ -1,0 +1,2 @@
+#!/bin/sh
+qemu-sparc-static -L /opt/sparc-buildroot-linux-uclibc_sdk-buildroot/sparc-buildroot-linux-uclibc/sysroot/ "$@"
