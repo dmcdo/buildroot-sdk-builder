@@ -8,17 +8,18 @@ default: toolchain
 buildroot-$(BUILDROOT)/:
 	wget https://buildroot.org/downloads/buildroot-$(BUILDROOT).tar.gz
 	tar xf buildroot-$(BUILDROOT).tar.gz
-	cp $(ARCH)/.config buildroot-$(BUILDROOT)/
 
 buildroot: buildroot-$(BUILDROOT)/
 
 $(ARCH)-buildroot-linux-uclibc_sdk-buildroot.tar.gz: buildroot-$(BUILDROOT)/
+	cp $(ARCH)/.config buildroot-$(BUILDROOT)/
+	cd buildroot-$(BUILDROOT)/ && make clean
 	cd buildroot-$(BUILDROOT)/ && make sdk
 	cp buildroot-$(BUILDROOT)/output/images/$(ARCH)-buildroot-linux-uclibc_sdk-buildroot.tar.gz .
 
 toolchain: $(ARCH)-buildroot-linux-uclibc_sdk-buildroot.tar.gz
 
-$(ARCH)-linux-toolchain_$(BUILDROOT)-$(REVISION).deb:
+$(ARCH)-linux-toolchain_$(BUILDROOT)-$(REVISION).deb: toolchain
 	mkdir -p $(ARCH)-linux-toolchain_$(BUILDROOT)-$(REVISION)
 	mkdir -p $(ARCH)-linux-toolchain_$(BUILDROOT)-$(REVISION)/opt
 	mkdir -p $(ARCH)-linux-toolchain_$(BUILDROOT)-$(REVISION)/usr/bin
