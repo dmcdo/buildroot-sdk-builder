@@ -1,0 +1,2 @@
+#!/bin/sh
+qemu-arm-static -L /opt/arm-buildroot-linux-gnueabi_sdk-buildroot/arm-buildroot-linux-gnueabi/sysroot/ "$@"

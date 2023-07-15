@@ -2,6 +2,7 @@ ARCH = sparc
 BUILDROOT = 2023.02.2
 REVISION = 1
 MAINTAINER = $(shell git config user.name) <$(shell git config user.email)>
+IMAGE = $(shell cat $(ARCH)/image)
 
 default: toolchain
 
@@ -11,13 +12,13 @@ buildroot-$(BUILDROOT)/:
 
 buildroot: buildroot-$(BUILDROOT)/
 
-$(ARCH)-buildroot-linux-uclibc_sdk-buildroot.tar.gz: buildroot-$(BUILDROOT)/
+$(IMAGE).tar.gz: buildroot-$(BUILDROOT)/
 	cp $(ARCH)/.config buildroot-$(BUILDROOT)/
 	cd buildroot-$(BUILDROOT)/ && make clean
 	cd buildroot-$(BUILDROOT)/ && make sdk
-	cp buildroot-$(BUILDROOT)/output/images/$(ARCH)-buildroot-linux-uclibc_sdk-buildroot.tar.gz .
+	cp buildroot-$(BUILDROOT)/output/images/$(IMAGE).tar.gz .
 
-toolchain: $(ARCH)-buildroot-linux-uclibc_sdk-buildroot.tar.gz
+toolchain: $(IMAGE).tar.gz
 
 $(ARCH)-linux-toolchain_$(BUILDROOT)-$(REVISION).deb: toolchain
 	mkdir -p $(ARCH)-linux-toolchain_$(BUILDROOT)-$(REVISION)
@@ -32,8 +33,8 @@ $(ARCH)-linux-toolchain_$(BUILDROOT)-$(REVISION).deb: toolchain
 	echo "Maintainer: $(MAINTAINER)"                        >> $(ARCH)-linux-toolchain_$(BUILDROOT)-$(REVISION)/DEBIAN/control
 	echo "Description: $(ARCH) Linux cross toolchain (GNU)" >> $(ARCH)-linux-toolchain_$(BUILDROOT)-$(REVISION)/DEBIAN/control
 
-	tar xf $(ARCH)-buildroot-linux-uclibc_sdk-buildroot.tar.gz -C $(ARCH)-linux-toolchain_$(BUILDROOT)-$(REVISION)/opt
-	cd $(ARCH)-linux-toolchain_$(BUILDROOT)-$(REVISION)/usr/bin && ln -sf ../../opt/$(ARCH)-buildroot-linux-uclibc_sdk-buildroot/bin/$(ARCH)-linux-* .
+	tar xf $(IMAGE).tar.gz -C $(ARCH)-linux-toolchain_$(BUILDROOT)-$(REVISION)/opt
+	cd $(ARCH)-linux-toolchain_$(BUILDROOT)-$(REVISION)/usr/bin && ln -sf ../../opt/$(IMAGE)/bin/$(ARCH)-linux-* .
 	cp $(ARCH)/$(ARCH)exec $(ARCH)-linux-toolchain_$(BUILDROOT)-$(REVISION)/usr/bin/$(ARCH)exec
 	dpkg-deb --build $(ARCH)-linux-toolchain_$(BUILDROOT)-$(REVISION)
 
@@ -50,16 +51,17 @@ debian: $(ARCH)-linux-toolchain_$(BUILDROOT)-$(REVISION).deb
 clean:
 	rm -f  *-linux-toolchain_*.deb
 	rm -rf *-linux-toolchain_*/
-	rm -f  *-buildroot-linux-uclibc_sdk-buildroot.tar.gz
+	rm -f  *-buildroot-linux-*_sdk-buildroot.tar.gz
+
 	rm -f  buildroot-*.tar.gz
 	rm -rf buildroot-*/
 
 install:
-	tar xf $(ARCH)-buildroot-linux-uclibc_sdk-buildroot.tar.gz -C /opt
-	cd /usr/bin && ln -sf ../../opt/$(ARCH)-buildroot-linux-uclibc_sdk-buildroot/bin/$(ARCH)-linux-* .
+	tar xf $(IMAGE).tar.gz -C /opt
+	cd /usr/bin && ln -sf ../../opt/$(IMAGE)/bin/$(ARCH)-linux-* .
 	cp $(ARCH)/$(ARCH)exec /usr/bin/$(ARCH)exec
 
 uninstall:
-	rm -rf /opt/$(ARCH)-buildroot-linux-uclibc_sdk-buildroot
+	rm -rf /opt/$(IMAGE)
 	rm -f  /usr/bin/$(ARCH)exec
 	rm -f  /usr/bin/$(ARCH)-linux-*

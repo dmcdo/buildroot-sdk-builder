@@ -1,0 +1,2 @@
+#!/bin/sh
+qemu-aarch64-static -L /opt/aarch64-buildroot-linux-gnu_sdk-buildroot/aarch64-buildroot-linux-gnu/sysroot/ "$@"

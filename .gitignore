@@ -1,6 +1,6 @@
 tmp/
 buildroot-*/
 buildroot-*.tar.gz
-*-buildroot-linux-uclibc_sdk-buildroot.tar.gz
+*-buildroot-linux-*_sdk-buildroot.tar.gz
 *-linux-toolchain_*/
 *-linux-toolchain_*.deb
