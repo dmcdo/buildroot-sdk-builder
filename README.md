@@ -39,6 +39,20 @@ sudo make install ARCH=mips
 This will install the toolchain to `/opt/sparc-buildroot-linux-uclibc_sdk-buildroot`. If necessary, you can uninstall the it with `sudo make uninstall`.
 
 
+### For Docker
+Building for Docker requires dpkg-dev. You can also use Podman for this.
+```sh
+make docker
+```
+This will build a docker container with the tag <ARCH>-linux-toolchain.
+<br />
+Here is an example of how to compile and run a local C file using the Docker container. This example uses SPARC.
+```sh
+docker run --rm -v "$PWD":/src -w /src sparc-linux-toolchain sparc-linux-gcc hello.c -o hello
+docker run --rm -v "$PWD":/src -w /src sparc-linux-toolchain sparcexec hello
+```
+
+
 ### Just The Toolchain
 ```sh
 make
