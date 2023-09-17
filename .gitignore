@@ -4,3 +4,4 @@ buildroot-*.tar.gz
 *-buildroot-linux-*_sdk-buildroot.tar.gz
 *-linux-toolchain_*/
 *-linux-toolchain_*.deb
+Dockerfile.*

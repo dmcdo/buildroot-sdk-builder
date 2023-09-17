@@ -73,13 +73,22 @@ $(SHORTPREFIX)-toolchain_$(BUILDROOT)-$(REVISION).deb: toolchain
 
 debian: $(SHORTPREFIX)-toolchain_$(BUILDROOT)-$(REVISION).deb
 
+docker:
+	echo "FROM debian:bookworm"                                                 > Dockerfile.$(ARCH)
+	echo "COPY $(SHORTPREFIX)-toolchain_$(BUILDROOT)-$(REVISION).deb /sdk.deb" >> Dockerfile.$(ARCH)
+	echo "RUN apt -y update && \\"                                             >> Dockerfile.$(ARCH)
+	echo "    apt -y upgrade && \\"                                            >> Dockerfile.$(ARCH)
+	echo "    apt -y install /sdk.deb && \\"                                   >> Dockerfile.$(ARCH)
+	echo "    rm sdk.deb"                                                      >> Dockerfile.$(ARCH)
+	docker build -f Dockerfile.$(ARCH) -t $(ARCH)-linux-toolchain .
+
 clean:
 	rm -f  *-linux-toolchain_*.deb
 	rm -rf *-linux-toolchain_*/
 	rm -f  *-buildroot-linux-*_sdk-buildroot.tar.gz
-
 	rm -f  buildroot-*.tar.gz
 	rm -rf buildroot-*/
+	rm -f  Dockerfile.*
 
 install:
 	tar xf $(IMAGE).tar.gz -C /opt
